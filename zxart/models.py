@@ -3,7 +3,6 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from types import MappingProxyType
 from typing import Final, Literal
 from urllib.parse import unquote
 
@@ -11,27 +10,26 @@ from mashumaro.mixins.orjson import DataClassORJSONMixin
 
 _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
 
-_FIELD_ALIASES = MappingProxyType(
-    {
-        "title_internal": "internalTitle",
-        "created": "dateCreated",
-        "modified": "dateModified",
-        "duration": "time",
-        "party_id": "partyId",
-        "party_place": "partyPlace",
-        "authors": "authorIds",
-        "original_url": "originalUrl",
-        "filename": "originalFileName",
-        "mp3_url": "mp3FilePath",
-        "image_url": "imageUrl",
-        "import_ids": "importIds",
-        "author_id": "authorId",
-        "start_date": "startDate",
-        "end_date": "endDate",
-        "num_images": "picturesQuantity",
-        "num_tunes": "tunesQuantity",
-    }
-)
+_FIELD_ALIASES = {
+    "author_id": "authorId",
+    "authors": "authorIds",
+    "created": "dateCreated",
+    "duration": "time",
+    "end_date": "endDate",
+    "filename": "originalFileName",
+    "image_url": "imageUrl",
+    "import_ids": "importIds",
+    "modified": "dateModified",
+    "mp3_url": "mp3FilePath",
+    "name": "realName",
+    "num_images": "picturesQuantity",
+    "num_tunes": "tunesQuantity",
+    "original_url": "originalUrl",
+    "party_id": "partyId",
+    "party_place": "partyPlace",
+    "start_date": "startDate",
+    "title_internal": "internalTitle",
+}
 """Карта соответствий полей моделей и JSON."""
 
 
@@ -70,7 +68,7 @@ class ProductCategory:
 
 
 @dc.dataclass(kw_only=True)
-class EntityModel:
+class EntityBase:
     """Базовая модель сущности."""
 
     id: int
@@ -89,7 +87,7 @@ class EntityModel:
 
 
 @dc.dataclass(kw_only=True)
-class Media(EntityModel):
+class Media(EntityBase):
     party_id: int | None = None
     """Идентификатор мероприятия"""
     compo: str | None = None
@@ -153,7 +151,7 @@ class ImportID:
 
 
 @dc.dataclass(kw_only=True)
-class AuthorAlias(EntityModel):
+class AuthorAlias(EntityBase):
     """Модель псевдонима автора"""
 
     author_id: int | None = None
@@ -167,10 +165,10 @@ class AuthorAlias(EntityModel):
 
 
 @dc.dataclass(kw_only=True)
-class Author(EntityModel):
+class Author(EntityBase):
     """Модель категории"""
 
-    realName: str | None = None
+    name: str | None = None
     """Настоящее имя"""
     country: str | None = None
     """Страна"""
@@ -187,7 +185,7 @@ class Author(EntityModel):
 
 
 @dc.dataclass(kw_only=True)
-class ResponseResult:
+class ResponseData:
     """Модель данных ответа"""
 
     author: list[Author] | None = None
@@ -211,7 +209,7 @@ class ResponseResult:
 
 
 @dc.dataclass(kw_only=True)
-class ResponseModel(DataClassORJSONMixin):
+class Response(DataClassORJSONMixin):
     """Модель ответа на запросы"""
 
     status: Literal["success"]
@@ -222,12 +220,12 @@ class ResponseModel(DataClassORJSONMixin):
     """Начальный индекс"""
     limit: int
     """Ограничение"""
-    result: ResponseResult
+    data: ResponseData
     """Данные ответа"""
 
     class Config:
         aliases = {
-            "result": "responseData",
+            "data": "responseData",
             "status": "responseStatus",
             "total": "totalAmount",
         }

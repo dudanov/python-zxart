@@ -6,7 +6,7 @@ from typing import TYPE_CHECKING, overload
 import aiohttp
 
 from .common import Language, Sorting, url_from_options
-from .models import ResponseModel
+from .models import Response
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Mapping, Unpack
@@ -103,6 +103,6 @@ class ZXArtClient:
         async with self._cli.get(url) as x:
             raw_data = await x.read()
 
-        response = ResponseModel.from_json(raw_data)
+        response = Response.from_json(raw_data)
 
-        return getattr(response.result, entity)
+        return getattr(response.data, entity)
