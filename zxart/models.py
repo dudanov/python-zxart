@@ -12,7 +12,7 @@ _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
 
 _FIELD_ALIASES = {
     "author_id": "authorId",
-    "authors": "authorIds",
+    "author_ids": "authorIds",
     "created": "dateCreated",
     "duration": "time",
     "end_date": "endDate",
@@ -94,7 +94,7 @@ class Media(EntityBase):
     """Тип"""
     party_place: int | None = None
     """Занятое место на мероприятии"""
-    authors: list[int]
+    author_ids: list[int]
     """Идентификаторы авторов"""
     tags: list[str] | None = None
     """Теги"""
@@ -138,16 +138,24 @@ class Picture(Media):
 
 @dc.dataclass
 class ImportID:
-    """Модель категории"""
+    """Импортированные идентификаторы автора на сторонних ресурсах."""
 
     zxaaa: str | None = dc.field(default=None, metadata={"alias": "3a"})
+    """Идентификатор на ресурсе: https://zxaaa.net/"""
     dzoo: str | None = None
+    """Идентификатор на ресурсе: https://demozoo.org/"""
     pouet: str | None = None
+    """Идентификатор на ресурсе: https://www.pouet.net/"""
     sc: str | None = None
+    """Идентификатор на ресурсе: https://spectrumcomputing.co.uk/"""
     wos: str | None = None
+    """Идентификатор на ресурсе: https://worldofspectrum.net/"""
     vt: str | None = None
+    """Идентификатор на ресурсе: https://vtrd.in/"""
     zxd: str | None = None
+    """Идентификатор на ресурсе: https://zxdemo.org/"""
     swiki: str | None = None
+    """Идентификатор на ресурсе: https://speccy.info/"""
 
 
 @dc.dataclass(kw_only=True)
