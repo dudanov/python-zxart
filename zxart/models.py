@@ -3,6 +3,7 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
+from types import MappingProxyType
 from typing import Final, Literal
 from urllib.parse import unquote
 
@@ -10,23 +11,27 @@ from mashumaro.mixins.orjson import DataClassORJSONMixin
 
 _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
 
-_FIELD_ALIASES: Final = {
-    "title_internal": "internalTitle",
-    "created": "dateCreated",
-    "modified": "dateModified",
-    "duration": "time",
-    "party_id": "partyId",
-    "party_place": "partyPlace",
-    "authors": "authorIds",
-    "original_url": "originalUrl",
-    "filename": "originalFileName",
-    "mp3_url": "mp3FilePath",
-    "image_url": "imageUrl",
-    "import_ids": "importIds",
-    "author_id": "authorId",
-    "start_date": "startDate",
-    "end_date": "endDate",
-}
+_FIELD_ALIASES = MappingProxyType(
+    {
+        "title_internal": "internalTitle",
+        "created": "dateCreated",
+        "modified": "dateModified",
+        "duration": "time",
+        "party_id": "partyId",
+        "party_place": "partyPlace",
+        "authors": "authorIds",
+        "original_url": "originalUrl",
+        "filename": "originalFileName",
+        "mp3_url": "mp3FilePath",
+        "image_url": "imageUrl",
+        "import_ids": "importIds",
+        "author_id": "authorId",
+        "start_date": "startDate",
+        "end_date": "endDate",
+        "num_images": "picturesQuantity",
+        "num_tunes": "tunesQuantity",
+    }
+)
 """Карта соответствий полей моделей и JSON."""
 
 
@@ -171,9 +176,9 @@ class Author(EntityModel):
     """Страна"""
     city: str | None = None
     """Город"""
-    picturesQuantity: int | None = None
+    num_images: int = 0
     """Количество изображений"""
-    tunesQuantity: int | None = None
+    num_tunes: int = 0
     """Количество мелодий"""
     aliases: list[int] | None = None
     """Идентификаторы псевдонимов"""
