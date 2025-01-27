@@ -3,13 +3,19 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Final, Literal
+from typing import Annotated, Literal
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
 from mashumaro.mixins.orjson import DataClassORJSONMixin
 
 _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
+
+type HtmlStr = Annotated[str, "HtmlStr"]
+"""Строка с экранированными символами HTML"""
+
+type QuotedStr = Annotated[str, "QuotedStr"]
+"""Строка с экранированными символами HTML"""
 
 
 def _unescape(value: str) -> str:
@@ -29,27 +35,23 @@ def _date(value: str) -> dt.date:
     return dt.datetime.strptime(value, "%d.%m.%Y").date()
 
 
-_meta_unescape: Final = {"deserialize": _unescape}
-_meta_unquote: Final = {"deserialize": unquote}
-
-
 @dc.dataclass
 class ProductCategory:
-    """Модель категории"""
+    """Категория"""
 
     id: int
     """Идентификатор"""
-    title: str = dc.field(metadata=_meta_unescape)
+    title: HtmlStr
     """Название"""
 
 
 @dc.dataclass(kw_only=True)
 class EntityBase:
-    """Базовая модель сущности."""
+    """Базовый класс сущности API"""
 
     id: int
     """Идентификатор"""
-    title: str | None = dc.field(default=None, metadata=_meta_unescape)
+    title: HtmlStr | None = None
     """Название"""
     url: str
     """URL страницы с описанием"""
@@ -84,11 +86,15 @@ class EntityBase:
             dt.datetime: {"deserialize": dt.datetime.fromtimestamp},
             dt.date: {"deserialize": _date},
             dt.timedelta: {"deserialize": _duration},
+            HtmlStr: {"deserialize": _unescape},
+            QuotedStr: {"deserialize": unquote},
         }
 
 
 @dc.dataclass(kw_only=True)
-class Media(EntityBase):
+class MediaBase(EntityBase):
+    """Базовый класс медиафайла"""
+
     party_id: int | None = None
     """Идентификатор мероприятия"""
     compo: str | None = None
@@ -105,36 +111,36 @@ class Media(EntityBase):
     """Рейтинг"""
     year: int | None = None
     """Год написания"""
-    description: str | None = dc.field(default=None, metadata=_meta_unescape)
+    description: HtmlStr | None = None
     """Описание"""
-    original_url: str | None = dc.field(default=None, metadata=_meta_unquote)
+    original_url: QuotedStr | None = None
     """URL оригинального файла"""
 
 
 @dc.dataclass(kw_only=True)
-class Music(Media):
-    """Модель музыкальной композиции"""
+class Tune(MediaBase):
+    """Мелодия"""
 
-    title_internal: str | None = dc.field(default=None, metadata=_meta_unescape)
+    title_internal: HtmlStr | None = None
     """Внутреннее название"""
     duration: dt.timedelta | None = None
     """Длительность"""
     plays: int | None = None
     """Кол-во прослушиваний"""
-    filename: str | None = dc.field(default=None, metadata=_meta_unquote)
+    filename: QuotedStr | None = None
     """Имя оригинального файла"""
     mp3_url: str | None = None
     """URL файла MP3"""
 
 
 @dc.dataclass(kw_only=True)
-class Picture(Media):
-    """Модель изображения"""
+class Image(MediaBase):
+    """Изображение"""
 
     image_url: str | None = None
     """URL изображения"""
     views: int | None = None
-    """Кол-во прослушиваний"""
+    """Кол-во просмотров"""
 
 
 @dc.dataclass
@@ -216,13 +222,13 @@ class ResponseData:
     """Группы"""
     groupAlias: list[Author] | None = None
     """Псевдонимы групп"""
-    zxMusic: list[Music] | None = None
+    zxMusic: list[Tune] | None = None
     """Музыкальные композиции"""
     zxProd: list[Author] | None = None
     """Продукты"""
     zxRelease: list[Author] | None = None
     """Релизы"""
-    zxPicture: list[Picture] | None = None
+    zxPicture: list[Image] | None = None
     """Изображения"""
     zxProdCategory: list[ProductCategory] | None = None
     """Категории"""

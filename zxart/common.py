@@ -77,9 +77,9 @@ class Entity(StrEnum):
     """Категория продукта"""
     RELEASE = "zxRelease"
     """Релиз"""
-    PICTURE = "zxPicture"
+    IMAGE = "zxPicture"
     """Изображение"""
-    MUSIC = "zxMusic"
+    TUNE = "zxMusic"
     """Музыка"""
 
 
@@ -98,7 +98,7 @@ class CommonOptions(TypedDict, total=False):
     """Фильтр: идентификатор сущности"""
 
 
-class MediaOptions(CommonOptions, total=False):
+class MediaParams(CommonOptions, total=False):
     """Опции фильтра"""
 
     title: str

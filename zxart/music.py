@@ -1,8 +1,8 @@
 from typing import Literal
 
-from .common import MediaOptions
+from .common import MediaParams
 
-MusicFormat = Literal[
+TuneFormat = Literal[
     "AKS",
     "AS0",
     "ASC",
@@ -45,7 +45,7 @@ MusicFormat = Literal[
 ]
 
 
-MusicFormatGroup = Literal[
+TuneFormatGroup = Literal[
     "ay",
     "beeper",
     "digitalbeeper",
@@ -61,11 +61,11 @@ MusicFormatGroup = Literal[
 ]
 
 
-class MusicOptions(MediaOptions, total=False):
-    format: MusicFormat
-    format_group: MusicFormatGroup
+class TuneParams(MediaParams, total=False):
+    format: TuneFormat
+    format_group: TuneFormatGroup
 
 
-class PictureOptions(MediaOptions, total=False):
-    type: MusicFormat
-    format_group: MusicFormatGroup
+class ImageParams(MediaParams, total=False):
+    type: TuneFormat
+    format_group: TuneFormatGroup

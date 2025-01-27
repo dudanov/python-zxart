@@ -12,8 +12,8 @@ if TYPE_CHECKING:
     from typing import Any, Literal, Mapping, Unpack
 
     from .common import CommonOptions, Entity, SortingSettings
-    from .models import Author, AuthorAlias, Music, Picture, ProductCategory
-    from .music import MusicOptions, PictureOptions
+    from .models import Author, AuthorAlias, Image, ProductCategory, Tune
+    from .music import ImageParams, TuneParams
 
     type JSONAny = Mapping[str, Any]
 
@@ -79,16 +79,16 @@ class ZXArtClient:
     @overload
     async def api(
         self,
-        entity: Literal[Entity.MUSIC],
-        **kwargs: Unpack[MusicOptions],
-    ) -> list[Music]: ...
+        entity: Literal[Entity.TUNE],
+        **kwargs: Unpack[TuneParams],
+    ) -> list[Tune]: ...
 
     @overload
     async def api(
         self,
-        entity: Literal[Entity.PICTURE],
-        **kwargs: Unpack[PictureOptions],
-    ) -> list[Picture]: ...
+        entity: Literal[Entity.IMAGE],
+        **kwargs: Unpack[ImageParams],
+    ) -> list[Image]: ...
 
     async def api(self, entity, **kwargs) -> list[Any]:
         kwargs.setdefault("export", entity)
