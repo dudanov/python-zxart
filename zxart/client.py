@@ -9,13 +9,11 @@ from .common import Language, Sorting, url_from_options
 from .models import Response
 
 if TYPE_CHECKING:
-    from typing import Any, Literal, Mapping, Unpack
+    from typing import Any, Literal, Unpack
 
     from .common import CommonOptions, Entity, SortingSettings
     from .models import Author, AuthorAlias, Image, ProductCategory, Tune
     from .music import ImageParams, TuneParams
-
-    type JSONAny = Mapping[str, Any]
 
 _LOGGER = logging.getLogger(__name__)
 
