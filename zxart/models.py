@@ -6,31 +6,10 @@ from decimal import Decimal
 from typing import Final, Literal
 from urllib.parse import unquote
 
+from mashumaro.config import BaseConfig
 from mashumaro.mixins.orjson import DataClassORJSONMixin
 
 _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
-
-_FIELD_ALIASES = {
-    "author_id": "authorId",
-    "author_ids": "authorIds",
-    "created": "dateCreated",
-    "duration": "time",
-    "end_date": "endDate",
-    "filename": "originalFileName",
-    "image_url": "imageUrl",
-    "import_ids": "importIds",
-    "modified": "dateModified",
-    "mp3_url": "mp3FilePath",
-    "name": "realName",
-    "num_images": "picturesQuantity",
-    "num_tunes": "tunesQuantity",
-    "original_url": "originalUrl",
-    "party_id": "partyId",
-    "party_place": "partyPlace",
-    "start_date": "startDate",
-    "title_internal": "internalTitle",
-}
-"""Карта соответствий полей моделей и JSON."""
 
 
 def _unescape(value: str) -> str:
@@ -50,11 +29,8 @@ def _date(value: str) -> dt.date:
     return dt.datetime.strptime(value, "%d.%m.%Y").date()
 
 
-_meta_duration: Final = {"deserialize": _duration}
 _meta_unescape: Final = {"deserialize": _unescape}
 _meta_unquote: Final = {"deserialize": unquote}
-_meta_datetime: Final = {"deserialize": dt.datetime.fromtimestamp}
-_meta_date: Final = {"deserialize": _date}
 
 
 @dc.dataclass
@@ -77,13 +53,40 @@ class EntityBase:
     """Название"""
     url: str
     """URL страницы с описанием"""
-    created: dt.datetime = dc.field(metadata=_meta_datetime)
+    created: dt.datetime
     """Дата и время создания записи"""
-    modified: dt.datetime = dc.field(metadata=_meta_datetime)
+    modified: dt.datetime
     """Дата и время последнего изменения"""
 
-    class Config:
-        aliases = _FIELD_ALIASES
+    class Config(BaseConfig):
+        aliases = {
+            "author_id": "authorId",
+            "author_ids": "authorIds",
+            "created": "dateCreated",
+            "duration": "time",
+            "end_date": "endDate",
+            "filename": "originalFileName",
+            "image_url": "imageUrl",
+            "import_ids": "importIds",
+            "modified": "dateModified",
+            "mp3_url": "mp3FilePath",
+            "name": "realName",
+            "num_images": "picturesQuantity",
+            "num_tunes": "tunesQuantity",
+            "original_url": "originalUrl",
+            "party_id": "partyId",
+            "party_place": "partyPlace",
+            "start_date": "startDate",
+            "title_internal": "internalTitle",
+        }
+
+        serialization_strategy = {
+            dt.datetime: {"deserialize": dt.datetime.fromtimestamp},
+            dt.date: {"deserialize": _date},
+            dt.timedelta: {"deserialize": _duration},
+        }
+
+        lazy_compilation = True
 
 
 @dc.dataclass(kw_only=True)
@@ -116,7 +119,7 @@ class Music(Media):
 
     title_internal: str | None = dc.field(default=None, metadata=_meta_unescape)
     """Внутреннее название"""
-    duration: dt.timedelta | None = dc.field(default=None, metadata=_meta_duration)
+    duration: dt.timedelta | None = None
     """Длительность"""
     plays: int | None = None
     """Кол-во прослушиваний"""
@@ -140,22 +143,33 @@ class Picture(Media):
 class ImportID:
     """Импортированные идентификаторы автора на сторонних ресурсах."""
 
-    zxaaa: str | None = dc.field(default=None, metadata={"alias": "3a"})
-    """Идентификатор на ресурсе: https://zxaaa.net/"""
-    dzoo: str | None = None
-    """Идентификатор на ресурсе: https://demozoo.org/"""
+    zxaaa: str | None = None
+    """https://zxaaa.net/"""
+    demozoo: str | None = None
+    """https://demozoo.org/"""
     pouet: str | None = None
-    """Идентификатор на ресурсе: https://www.pouet.net/"""
-    sc: str | None = None
-    """Идентификатор на ресурсе: https://spectrumcomputing.co.uk/"""
-    wos: str | None = None
-    """Идентификатор на ресурсе: https://worldofspectrum.net/"""
-    vt: str | None = None
-    """Идентификатор на ресурсе: https://vtrd.in/"""
-    zxd: str | None = None
-    """Идентификатор на ресурсе: https://zxdemo.org/"""
-    swiki: str | None = None
-    """Идентификатор на ресурсе: https://speccy.info/"""
+    """https://www.pouet.net/"""
+    spectrumcomputing: str | None = None
+    """https://spectrumcomputing.co.uk/"""
+    worldofspectrum: str | None = None
+    """https://worldofspectrum.net/"""
+    vtrd: str | None = None
+    """https://vtrd.in/"""
+    zxdemo: str | None = None
+    """https://zxdemo.org/"""
+    speccy: str | None = None
+    """https://speccy.info/"""
+
+    class Config(BaseConfig):
+        aliases = {
+            "zxaaa": "3a",
+            "demozoo": "dzoo",
+            "spectrumcomputing": "sc",
+            "worldofspectrum": "wos",
+            "vtrd": "vt",
+            "zxdemo": "zxd",
+            "speccy": "swiki",
+        }
 
 
 @dc.dataclass(kw_only=True)
@@ -166,9 +180,9 @@ class AuthorAlias(EntityBase):
     """Идентификатор настоящего автора"""
     import_ids: ImportID | None = None
     """Идентификаторы на других ресурсах"""
-    start_date: dt.date | None = dc.field(default=None, metadata=_meta_date)
+    start_date: dt.date | None = None
     """Дата начала действия"""
-    end_date: dt.date | None = dc.field(default=None, metadata=_meta_date)
+    end_date: dt.date | None = None
     """Дата окончания действия"""
 
 
@@ -231,9 +245,11 @@ class Response(DataClassORJSONMixin):
     data: ResponseData
     """Данные ответа"""
 
-    class Config:
+    class Config(BaseConfig):
         aliases = {
             "data": "responseData",
             "status": "responseStatus",
             "total": "totalAmount",
         }
+
+        lazy_compilation = True
