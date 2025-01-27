@@ -80,7 +80,7 @@ class Entity(StrEnum):
     IMAGE = "zxPicture"
     """Изображение"""
     TUNE = "zxMusic"
-    """Музыка"""
+    """Мелодия"""
 
 
 class CommonOptions(TypedDict, total=False):
