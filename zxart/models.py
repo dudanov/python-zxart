@@ -86,8 +86,6 @@ class EntityBase:
             dt.timedelta: {"deserialize": _duration},
         }
 
-        lazy_compilation = True
-
 
 @dc.dataclass(kw_only=True)
 class Media(EntityBase):
