@@ -14,8 +14,8 @@ _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
 type HtmlStr = Annotated[str, "HtmlStr"]
 """Строка с экранированными символами HTML"""
 
-type QuotedStr = Annotated[str, "QuotedStr"]
-"""Строка с экранированными символами HTML"""
+type UrlStr = Annotated[str, "UrlStr"]
+"""Строка с экранированными символами URL"""
 
 
 def _unescape(value: str) -> str:
@@ -87,7 +87,7 @@ class EntityBase:
             dt.date: {"deserialize": _date},
             dt.timedelta: {"deserialize": _duration},
             HtmlStr: {"deserialize": _unescape},
-            QuotedStr: {"deserialize": unquote},
+            UrlStr: {"deserialize": unquote},
         }
 
 
@@ -113,7 +113,7 @@ class MediaBase(EntityBase):
     """Год написания"""
     description: HtmlStr | None = None
     """Описание"""
-    original_url: QuotedStr | None = None
+    original_url: UrlStr | None = None
     """URL оригинального файла"""
 
 
@@ -127,7 +127,7 @@ class Tune(MediaBase):
     """Длительность"""
     plays: int | None = None
     """Кол-во прослушиваний"""
-    filename: QuotedStr | None = None
+    filename: UrlStr | None = None
     """Имя оригинального файла"""
     mp3_url: str | None = None
     """URL файла MP3"""
