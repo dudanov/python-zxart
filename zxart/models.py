@@ -8,6 +8,7 @@ from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
 from mashumaro.mixins.orjson import DataClassORJSONMixin
+from yarl import URL
 
 _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
 
@@ -53,7 +54,7 @@ class EntityBase:
     """Идентификатор"""
     title: HtmlStr | None = None
     """Название"""
-    url: str
+    url: URL
     """URL страницы с описанием"""
     created: dt.datetime
     """Дата и время создания записи"""
@@ -113,7 +114,7 @@ class MediaBase(EntityBase):
     """Год написания"""
     description: HtmlStr | None = None
     """Описание"""
-    original_url: UrlStr | None = None
+    original_url: URL | None = None
     """URL оригинального файла"""
 
 
@@ -129,7 +130,7 @@ class Tune(MediaBase):
     """Кол-во прослушиваний"""
     filename: UrlStr | None = None
     """Имя оригинального файла"""
-    mp3_url: str | None = None
+    mp3_url: URL | None = None
     """URL файла MP3"""
 
 
@@ -137,7 +138,7 @@ class Tune(MediaBase):
 class Image(MediaBase):
     """Изображение"""
 
-    image_url: str | None = None
+    image_url: URL | None = None
     """URL изображения"""
     views: int | None = None
     """Кол-во просмотров"""
