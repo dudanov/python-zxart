@@ -27,9 +27,9 @@ def _unescape(value: str) -> str:
 
 
 def _duration(value: str) -> dt.timedelta:
-    ms, *smh = map(int, reversed(re.split(r"[:.]", value)))
-    s = sum(x * k for x, k in zip(smh, [1, 60, 3600]))
-    return dt.timedelta(seconds=s, milliseconds=ms * 10)
+    m = map(float, reversed(value.split(":")))
+    s = sum(x * k for x, k in zip(m, [1, 60, 3600]))
+    return dt.timedelta(seconds=s)
 
 
 def _date(value: str) -> dt.date:
