@@ -111,22 +111,28 @@ class MediaParams(CommonOptions, total=False):
     """Фильтр: минимальный рейтинг"""
     min_party_place: int
     """Фильтр: минимальное место на мероприятии"""
+    tags_include: list[str]
+    """Фильтр: включающие теги"""
+    tags_exclude: list[str]
+    """Фильтр: исключающие теги"""
 
 
 _FILTER_MAP = MappingProxyType(
     {
         "author_id": "authorId",
+        "compo": "Compo",
         "format_group": "FormatGroup",
         "format": "Format",
+        "has_inspiration": "Inspiration",
+        "has_stages": "Stages",
         "id": "Id",
         "min_party_place": "MinPartyPlace",
         "min_rating": "MinRating",
+        "tags_exclude": "TagsExclude",
+        "tags_include": "TagsInclude",
         "title": "TitleSearch",
-        "years": "Year",
-        "compo": "Compo",
         "type": "Type",
-        "has_inspiration": "Inspiration",
-        "has_stages": "Stages",
+        "years": "Year",
     }
 )
 
@@ -140,7 +146,7 @@ def url_from_options(**kwargs: Any):
         if (fk := _FILTER_MAP.get(k)) is None:
             continue
 
-        if isinstance(v := kwargs.pop(k), (list, tuple)):
+        if isinstance(v := kwargs.pop(k), list):
             v = ",".join(map(str, v))
 
         if k != "author_id":
