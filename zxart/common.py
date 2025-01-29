@@ -1,7 +1,7 @@
 import dataclasses as dc
 from enum import Enum, StrEnum
 from types import MappingProxyType
-from typing import Any, Literal, TypedDict
+from typing import Any, Iterable, Literal, TypedDict
 
 import yarl
 
@@ -105,16 +105,16 @@ class MediaParams(CommonOptions, total=False):
     """Фильтр: содержание наименования"""
     author_id: int
     """Фильтр: идентификатор автора"""
-    years: list[int]
+    years: Iterable[int]
     """Фильтр: годы публикации"""
     min_rating: float
     """Фильтр: минимальный рейтинг"""
     min_party_place: int
     """Фильтр: минимальное место на мероприятии"""
-    tags_include: list[str]
-    """Фильтр: включающие теги"""
-    tags_exclude: list[str]
-    """Фильтр: исключающие теги"""
+    tags_include: Iterable[str]
+    """Фильтр: с тегами"""
+    tags_exclude: Iterable[str]
+    """Фильтр: без тегов"""
 
 
 _FILTER_MAP = MappingProxyType(
@@ -146,7 +146,7 @@ def url_from_options(**kwargs: Any):
         if (fk := _FILTER_MAP.get(k)) is None:
             continue
 
-        if isinstance(v := kwargs.pop(k), list):
+        if isinstance(v := kwargs.pop(k), Iterable):
             v = ",".join(map(str, v))
 
         if k != "author_id":
