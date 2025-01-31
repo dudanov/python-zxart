@@ -149,7 +149,7 @@ def url_from_options(**kwargs: Any):
         if isinstance(v := kwargs.pop(k), Iterable):
             v = ",".join(map(str, v))
 
-        if k != "author_id":
+        if fk[0].isupper():
             fk = f"{entity}{fk}"
 
         filters.append(f"{fk}={v}")
