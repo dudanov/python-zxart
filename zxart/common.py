@@ -105,15 +105,15 @@ class MediaParams(CommonOptions, total=False):
     """Фильтр: содержание наименования"""
     author_id: int
     """Фильтр: идентификатор автора"""
-    years: Iterable[int]
+    years: Iterable[int] | int
     """Фильтр: годы публикации"""
     min_rating: float
     """Фильтр: минимальный рейтинг"""
     min_party_place: int
     """Фильтр: минимальное место на мероприятии"""
-    tags_include: Iterable[str]
+    tags_include: Iterable[str] | str
     """Фильтр: с тегами"""
-    tags_exclude: Iterable[str]
+    tags_exclude: list[str] | str
     """Фильтр: без тегов"""
 
 
@@ -147,13 +147,15 @@ def url_from_options(**kwargs: Any):
         if (filter := _FILTER_MAP.get(k)) is None:
             continue
 
-        if isinstance(v := kwargs.pop(k), Iterable):
-            v = ",".join(map(str, v))
+        value = kwargs.pop(k)
+
+        if not isinstance(value, str) and isinstance(value, Iterable):
+            value = ",".join(map(str, value))
 
         if filter[0].isupper():
             filter = entity + filter
 
-        filters.append(f"{filter}={v}")
+        filters.append(f"{filter}={value}")
 
     if filters:
         kwargs["filter"] = ";".join(filters)
