@@ -140,19 +140,20 @@ _FILTER_MAP = MappingProxyType(
 def url_from_options(**kwargs: Any):
     """Преобразует параметры в URL запроса к API."""
 
-    entity, filters = kwargs["export"], []
+    entity: Entity = kwargs["export"]
+    filters: list[str] = []
 
     for k in tuple(kwargs):
-        if (fk := _FILTER_MAP.get(k)) is None:
+        if (filter := _FILTER_MAP.get(k)) is None:
             continue
 
         if isinstance(v := kwargs.pop(k), Iterable):
             v = ",".join(map(str, v))
 
-        if fk[0].isupper():
-            fk = f"{entity}{fk}"
+        if filter[0].isupper():
+            filter = entity + filter
 
-        filters.append(f"{fk}={v}")
+        filters.append(f"{filter}={v}")
 
     if filters:
         kwargs["filter"] = ";".join(filters)
