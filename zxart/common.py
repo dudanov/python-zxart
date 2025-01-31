@@ -113,7 +113,7 @@ class MediaParams(CommonOptions, total=False):
     """Фильтр: минимальное место на мероприятии"""
     tags_include: Iterable[str] | str
     """Фильтр: с тегами"""
-    tags_exclude: list[str] | str
+    tags_exclude: Iterable[str] | str
     """Фильтр: без тегов"""
 
 
