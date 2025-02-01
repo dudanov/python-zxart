@@ -1,6 +1,5 @@
 import dataclasses as dc
 from enum import Enum, StrEnum
-from types import MappingProxyType
 from typing import Any, Iterable, Literal, TypedDict
 
 import yarl
@@ -117,24 +116,22 @@ class MediaParams(CommonOptions, total=False):
     """Фильтр: без тегов"""
 
 
-_FILTER_MAP = MappingProxyType(
-    {
-        "author_id": "authorId",
-        "compo": "Compo",
-        "format_group": "FormatGroup",
-        "format": "Format",
-        "has_inspiration": "Inspiration",
-        "has_stages": "Stages",
-        "id": "Id",
-        "min_party_place": "MinPartyPlace",
-        "min_rating": "MinRating",
-        "tags_exclude": "TagsExclude",
-        "tags_include": "TagsInclude",
-        "title": "TitleSearch",
-        "type": "Type",
-        "years": "Year",
-    }
-)
+_FILTER_MAP = {
+    "author_id": "authorId",
+    "compo": "Compo",
+    "format_group": "FormatGroup",
+    "format": "Format",
+    "has_inspiration": "Inspiration",
+    "has_stages": "Stages",
+    "id": "Id",
+    "min_party_place": "MinPartyPlace",
+    "min_rating": "MinRating",
+    "tags_exclude": "TagsExclude",
+    "tags_include": "TagsInclude",
+    "title": "TitleSearch",
+    "type": "Type",
+    "years": "Year",
+}
 
 
 def url_from_options(**kwargs: Any):
