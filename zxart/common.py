@@ -140,19 +140,19 @@ def url_from_options(**kwargs: Any):
     entity: Entity = kwargs["export"]
     filters: list[str] = []
 
-    for k in tuple(kwargs):
-        if (filter := _FILTER_MAP.get(k)) is None:
+    for arg in tuple(kwargs):
+        if (k := _FILTER_MAP.get(arg)) is None:
             continue
 
-        value = kwargs.pop(k)
+        v = kwargs.pop(arg)
 
-        if not isinstance(value, str) and isinstance(value, Iterable):
-            value = ",".join(map(str, value))
+        if not isinstance(v, str) and isinstance(v, Iterable):
+            v = ",".join(map(str, v))
 
-        if filter[0].isupper():
-            filter = entity + filter
+        if k[0].isupper():
+            k = entity + k
 
-        filters.append(f"{filter}={value}")
+        filters.append(f"{k}={v}")
 
     if filters:
         kwargs["filter"] = ";".join(filters)
