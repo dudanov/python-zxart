@@ -2,11 +2,6 @@ import dataclasses as dc
 from enum import Enum, StrEnum
 from typing import Any, Iterable, Literal, TypedDict
 
-import yarl
-
-_BASE_URL = yarl.URL("https://zxart.ee/api/")
-"""Базовый URL API"""
-
 
 @dc.dataclass(frozen=True, slots=True)
 class SortingSettings:
@@ -134,10 +129,9 @@ _FILTER_MAP = {
 }
 
 
-def url_from_options(**kwargs: Any):
-    """Преобразует параметры в URL запроса к API."""
+def process_filters(entity: Entity, kwargs: dict[str, Any]) -> None:
+    """Обработка параметров фильтров"""
 
-    entity: Entity = kwargs["export"]
     filters: list[str] = []
 
     for arg in tuple(kwargs):
@@ -156,5 +150,3 @@ def url_from_options(**kwargs: Any):
 
     if filters:
         kwargs["filter"] = ";".join(filters)
-
-    return _BASE_URL.joinpath(*(f"{k}:{v}" for k, v in kwargs.items()))

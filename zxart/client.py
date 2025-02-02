@@ -4,8 +4,9 @@ import logging
 from typing import TYPE_CHECKING, overload
 
 import aiohttp
+import yarl
 
-from .common import Language, Sorting, url_from_options
+from .common import Language, Sorting, process_filters
 from .models import Response
 
 if TYPE_CHECKING:
@@ -21,6 +22,9 @@ _LOGGER = logging.getLogger(__name__)
 _DEFAULT_SORTING = Sorting.MOST_RECENT
 _DEFAULT_LANGUAGE = Language.RUSSIAN
 _DEFAULT_LIMIT = 60
+
+_BASE_URL = yarl.URL("https://zxart.ee/api/")
+"""Базовый URL API"""
 
 
 class ZXArtClient:
@@ -88,13 +92,15 @@ class ZXArtClient:
         **kwargs: Unpack[ImageParams],
     ) -> list[Image]: ...
 
-    async def api(self, entity, **kwargs) -> list[Any]:
+    async def api(self, entity: Entity, **kwargs: Any) -> list[Any]:
+        process_filters(entity, kwargs)
+
         kwargs.setdefault("export", entity)
         kwargs.setdefault("language", self._language)
         kwargs.setdefault("limit", self._limit)
         kwargs.setdefault("order", self._sorting)
 
-        url = url_from_options(**kwargs)
+        url = _BASE_URL.joinpath(*(f"{k}:{v}" for k, v in kwargs.items()))
 
         _LOGGER.debug("API request URL: %s", url)
 
