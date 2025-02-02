@@ -2,7 +2,7 @@ from typing import Literal
 
 from .common import MediaParams
 
-TuneFormat = Literal[
+ImageFormat = Literal[
     "AKS",
     "AS0",
     "ASC",
@@ -45,7 +45,7 @@ TuneFormat = Literal[
 ]
 
 
-TuneFormatGroup = Literal[
+ImageFormatGroup = Literal[
     "ay",
     "beeper",
     "digitalbeeper",
@@ -61,11 +61,6 @@ TuneFormatGroup = Literal[
 ]
 
 
-class TuneParams(MediaParams, total=False):
-    format: TuneFormat
-    format_group: TuneFormatGroup
-
-
 class ImageParams(MediaParams, total=False):
-    type: TuneFormat
-    format_group: TuneFormatGroup
+    type: ImageFormat
+    format_group: ImageFormatGroup

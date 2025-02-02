@@ -6,20 +6,21 @@ from typing import TYPE_CHECKING, overload
 import aiohttp
 import yarl
 
-from .common import Language, Sorting, process_filters
-from .models import Response
+from .common import Language, Order, process_filters
+from .models import ApiResponse, Response
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Unpack
 
-    from .common import CommonOptions, Entity, SortingSettings
+    from .common import CommonOptions, Entity, OrderSettings
+    from .image import ImageParams
     from .models import Author, AuthorAlias, Image, ProductCategory, Tune
-    from .music import ImageParams, TuneParams
+    from .tune import TuneParams
 
 _LOGGER = logging.getLogger(__name__)
 
 # Опции по-умолчанию
-_DEFAULT_SORTING = Sorting.MOST_RECENT
+_DEFAULT_SORTING = Order.MOST_RECENT
 _DEFAULT_LANGUAGE = Language.RUSSIAN
 _DEFAULT_LIMIT = 60
 
@@ -31,19 +32,19 @@ class ZXArtClient:
     _cli: aiohttp.ClientSession
     _language: Language
     _limit: int
-    _sorting: Sorting | SortingSettings
+    _order: Order | OrderSettings
 
     def __init__(
         self,
         *,
         language: Language | None = None,
         limit: int | None = None,
-        sorting: Sorting | SortingSettings | None = None,
+        order: Order | OrderSettings | None = None,
         session: aiohttp.ClientSession | None = None,
     ) -> None:
         self._language = language or _DEFAULT_LANGUAGE
         self._limit = limit or _DEFAULT_LIMIT
-        self._sorting = sorting or _DEFAULT_SORTING
+        self._order = order or _DEFAULT_SORTING
         self._cli = session or aiohttp.ClientSession()
         self._close_connector = not session
 
@@ -62,43 +63,43 @@ class ZXArtClient:
         self,
         entity: Literal[Entity.AUTHOR],
         **kwargs: Unpack[CommonOptions],
-    ) -> list[Author]: ...
+    ) -> ApiResponse[Author]: ...
 
     @overload
     async def api(
         self,
         entity: Literal[Entity.AUTHOR_ALIAS],
         **kwargs: Unpack[CommonOptions],
-    ) -> list[AuthorAlias]: ...
+    ) -> ApiResponse[AuthorAlias]: ...
 
     @overload
     async def api(
         self,
         entity: Literal[Entity.PRODUCT_CATEGORY],
         **kwargs: Unpack[CommonOptions],
-    ) -> list[ProductCategory]: ...
+    ) -> ApiResponse[ProductCategory]: ...
 
     @overload
     async def api(
         self,
         entity: Literal[Entity.TUNE],
         **kwargs: Unpack[TuneParams],
-    ) -> list[Tune]: ...
+    ) -> ApiResponse[Tune]: ...
 
     @overload
     async def api(
         self,
         entity: Literal[Entity.IMAGE],
         **kwargs: Unpack[ImageParams],
-    ) -> list[Image]: ...
+    ) -> ApiResponse[Image]: ...
 
-    async def api(self, entity: Entity, **kwargs: Any) -> list[Any]:
+    async def api(self, entity: Entity, **kwargs: Any) -> ApiResponse:
         if kwargs:
             process_filters(entity, kwargs)
 
         kwargs.setdefault("language", self._language)
         kwargs.setdefault("limit", self._limit)
-        kwargs.setdefault("order", self._sorting)
+        kwargs.setdefault("order", self._order)
         kwargs["export"] = entity
 
         url = _BASE_URL.joinpath(*(f"{k}:{v}" for k, v in kwargs.items()))
@@ -108,6 +109,11 @@ class ZXArtClient:
         async with self._cli.get(url) as x:
             raw_data = await x.read()
 
-        response = Response.from_json(raw_data)
+        x = Response.from_json(raw_data)
 
-        return getattr(response.data, entity)
+        return ApiResponse(
+            total=x.total,
+            start=x.start,
+            limit=x.limit,
+            result=getattr(x.data, entity),
+        )

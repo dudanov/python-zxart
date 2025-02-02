@@ -4,7 +4,7 @@ from typing import Any, Iterable, Literal, TypedDict
 
 
 @dc.dataclass(frozen=True, slots=True)
-class SortingSettings:
+class OrderSettings:
     """Параметры сортировки."""
 
     field: Literal[
@@ -25,18 +25,18 @@ class SortingSettings:
         return f"{self.field},{self.order}"
 
 
-class Sorting(Enum):
+class Order(Enum):
     """Часто использованные шаблоны сортировки."""
 
-    TOP_RATED = SortingSettings("votes")
+    TOP_RATED = OrderSettings("votes")
     """Самые рейтинговые"""
-    MOST_PLAYED = SortingSettings("plays")
+    MOST_PLAYED = OrderSettings("plays")
     """Самые прослушиваемые"""
-    MOST_RECENT = SortingSettings("date")
+    MOST_RECENT = OrderSettings("date")
     """Недавно загруженные"""
-    TOP_PLACED = SortingSettings("place", "asc")
+    TOP_PLACED = OrderSettings("place", "asc")
     """Самые оцененные на мероприятиях"""
-    MOST_COMMENTED = SortingSettings("commentsAmount")
+    MOST_COMMENTED = OrderSettings("commentsAmount")
     """Самые комментируемые"""
 
     def __str__(self):
@@ -82,7 +82,7 @@ class CommonOptions(TypedDict, total=False):
 
     language: Language
     """Язык переводимых полей ответа."""
-    order: SortingSettings | Sorting
+    order: OrderSettings | Order
     """Порядок сортировки."""
     start: int
     """Индекс начальной записи выборки."""

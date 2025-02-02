@@ -1,8 +1,8 @@
 from .client import ZXArtClient
-from .common import Sorting, SortingSettings
+from .common import Order, OrderSettings
 
 __all__ = [
     "ZXArtClient",
-    "Sorting",
-    "SortingSettings",
+    "Order",
+    "OrderSettings",
 ]

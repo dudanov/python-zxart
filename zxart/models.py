@@ -3,7 +3,7 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Annotated, Any, Literal
+from typing import Annotated, Any, Literal, NamedTuple
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
@@ -84,10 +84,11 @@ class EntityBase:
         }
 
         serialization_strategy = {
-            dt.datetime: {"deserialize": dt.datetime.fromtimestamp},
             dt.date: {"deserialize": _date},
+            dt.datetime: {"deserialize": dt.datetime.fromtimestamp},
             dt.timedelta: {"deserialize": _duration},
             HtmlStr: {"deserialize": _unescape},
+            URL: {"deserialize": URL},
             UrlStr: {"deserialize": unquote},
         }
 
@@ -262,3 +263,16 @@ class Response(DataClassORJSONMixin):
         }
 
         lazy_compilation = True
+
+
+class ApiResponse[T](NamedTuple):
+    """Ответ API"""
+
+    total: int
+    """Количество записей в БД"""
+    start: int
+    """Индекс начальной записи"""
+    limit: int
+    """Ограничение записей"""
+    result: list[T]
+    """Список объектов запроса"""
