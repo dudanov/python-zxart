@@ -96,10 +96,10 @@ class ZXArtClient:
         if kwargs:
             process_filters(entity, kwargs)
 
-        kwargs.setdefault("export", entity)
         kwargs.setdefault("language", self._language)
         kwargs.setdefault("limit", self._limit)
         kwargs.setdefault("order", self._sorting)
+        kwargs["export"] = entity
 
         url = _BASE_URL.joinpath(*(f"{k}:{v}" for k, v in kwargs.items()))
 
