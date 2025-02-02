@@ -93,7 +93,8 @@ class ZXArtClient:
     ) -> list[Image]: ...
 
     async def api(self, entity: Entity, **kwargs: Any) -> list[Any]:
-        process_filters(entity, kwargs)
+        if kwargs:
+            process_filters(entity, kwargs)
 
         kwargs.setdefault("export", entity)
         kwargs.setdefault("language", self._language)
