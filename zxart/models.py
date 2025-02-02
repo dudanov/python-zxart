@@ -3,7 +3,7 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Annotated, Any, Literal, NamedTuple
+from typing import Annotated, Literal, NamedTuple
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
@@ -240,28 +240,18 @@ class ResponseData:
 class Response(DataClassORJSONMixin):
     """Модель ответа на запросы"""
 
-    status: Literal["success"]
+    responseStatus: Literal["success"]
     """Статус"""
-    total: int
+    totalAmount: int
     """Всего записей в базе данных"""
     start: int
     """Начальный индекс"""
     limit: int
     """Ограничение"""
-    data: ResponseData
+    responseData: ResponseData
     """Данные ответа"""
 
-    @property
-    def result(self) -> list[Any]:
-        return next(x for x in dc.astuple(self.data) if x is not None)
-
     class Config(BaseConfig):
-        aliases = {
-            "data": "responseData",
-            "status": "responseStatus",
-            "total": "totalAmount",
-        }
-
         lazy_compilation = True
 
 
@@ -269,10 +259,10 @@ class ApiResponse[T](NamedTuple):
     """Ответ API"""
 
     total: int
-    """Количество записей в БД"""
+    """Всего записей в базе данных"""
     start: int
-    """Индекс начальной записи"""
+    """Начальный индекс"""
     limit: int
-    """Ограничение записей"""
+    """Ограничение"""
     result: list[T]
     """Список объектов запроса"""
