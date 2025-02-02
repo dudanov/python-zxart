@@ -3,7 +3,7 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
@@ -249,6 +249,10 @@ class Response(DataClassORJSONMixin):
     """Ограничение"""
     data: ResponseData
     """Данные ответа"""
+
+    @property
+    def result(self) -> list[Any]:
+        return next(x for x in dc.astuple(self.data) if x is not None)
 
     class Config(BaseConfig):
         aliases = {
