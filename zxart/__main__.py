@@ -12,6 +12,8 @@ async def main():
         result = await cli.api(
             Entity.TUNE,
             order=Order.MOST_RECENT,
+            min_party_place=1,
+            years=range(2023, 2026),
         )
 
         for x in result.result:
