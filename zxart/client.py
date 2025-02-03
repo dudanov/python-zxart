@@ -18,8 +18,6 @@ if TYPE_CHECKING:
     from .models import Author, AuthorAlias, Image, ProductCategory, Tune
     from .tune import TuneParams
 
-    type StrAnyDict = dict[str, Any]
-
 _LOGGER = logging.getLogger(__name__)
 
 # Опции по-умолчанию
@@ -29,6 +27,10 @@ _DEFAULT_LIMIT = 60
 
 _BASE_URL = yarl.URL("https://zxart.ee/api/")
 """Базовый URL API"""
+
+
+class ZXArtApiError(Exception):
+    pass
 
 
 class ZXArtClient:
@@ -112,12 +114,12 @@ class ZXArtClient:
         async with self._cli.get(url) as x:
             raw_data = await x.read()
 
-        json: StrAnyDict = orjson.loads(raw_data)
+        json: dict[str, Any] = orjson.loads(raw_data)
 
         if json.pop("responseStatus") != "success":
-            raise ValueError()
+            raise ZXArtApiError("API request error!")
 
-        data: StrAnyDict = json.pop("responseData")
-        json["entity"], json["result"] = next(iter(data.items()))
+        json["result"] = json.pop("responseData")[entity]
+        json["entity"] = entity
 
         return ApiResponse.from_dict(json)
