@@ -3,7 +3,7 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Annotated, Literal
+from typing import Annotated, Any, Literal
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
@@ -17,6 +17,8 @@ type HtmlStr = Annotated[str, "HtmlStr"]
 
 type UrlStr = Annotated[str, "UrlStr"]
 """Строка с экранированными символами URL"""
+
+type StrAnyDict = dict[str, Any]
 
 
 def _unescape(value: str) -> str:
@@ -240,19 +242,31 @@ class ResponseData:
 class Response(DataClassORJSONMixin):
     """Модель ответа на запросы"""
 
-    responseStatus: Literal["success"]
+    entity: str
+    """Сущность в ответе"""
+    status: Literal["success"]
     """Статус"""
-    totalAmount: int
+    total: int
     """Всего записей в базе данных"""
     start: int
     """Начальный индекс"""
     limit: int
     """Ограничение"""
-    responseData: ResponseData
+    result: list[Tune]
     """Данные ответа"""
+
+    @classmethod
+    def __pre_deserialize__(cls, x: StrAnyDict) -> StrAnyDict:
+        data: StrAnyDict = x.pop("responseData")
+        x["entity"], x["result"] = next(iter(data.items()))
+        return x
 
     class Config(BaseConfig):
         lazy_compilation = True
+        aliases = {
+            "status": "responseStatus",
+            "total": "totalAmount",
+        }
 
 
 @dc.dataclass

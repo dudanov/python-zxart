@@ -112,8 +112,8 @@ class ZXArtClient:
         x = Response.from_json(raw_data)
 
         return ApiResponse(
-            total=x.totalAmount,
+            total=x.total,
             start=x.start,
             limit=x.limit,
-            result=getattr(x.responseData, entity),
+            result=x.result,
         )
