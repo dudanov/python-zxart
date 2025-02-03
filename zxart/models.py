@@ -3,7 +3,7 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Annotated, Literal, NamedTuple
+from typing import Annotated, Literal
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
@@ -255,7 +255,8 @@ class Response(DataClassORJSONMixin):
         lazy_compilation = True
 
 
-class ApiResponse[T](NamedTuple):
+@dc.dataclass
+class ApiResponse[T]:
     """Ответ API"""
 
     total: int
