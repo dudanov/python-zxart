@@ -112,9 +112,7 @@ class ZXArtClient:
         _LOGGER.debug("API request URL: %s", url)
 
         async with self._cli.get(url) as x:
-            raw_data = await x.read()
-
-        json: dict[str, Any] = orjson.loads(raw_data)
+            json: dict[str, Any] = await x.json(loads=orjson.loads)
 
         if json.pop("responseStatus") != "success":
             raise ZXArtApiError("API request error!")
