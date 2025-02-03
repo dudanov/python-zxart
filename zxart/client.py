@@ -4,10 +4,11 @@ import logging
 from typing import TYPE_CHECKING, overload
 
 import aiohttp
+import orjson
 import yarl
 
 from .common import Language, Order, process_filters
-from .models import ApiResponse, Response
+from .models import ApiResponse
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Unpack
@@ -16,6 +17,8 @@ if TYPE_CHECKING:
     from .image import ImageParams
     from .models import Author, AuthorAlias, Image, ProductCategory, Tune
     from .tune import TuneParams
+
+    type StrAnyDict = dict[str, Any]
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -109,11 +112,12 @@ class ZXArtClient:
         async with self._cli.get(url) as x:
             raw_data = await x.read()
 
-        x = Response.from_json(raw_data)
+        json: StrAnyDict = orjson.loads(raw_data)
 
-        return ApiResponse(
-            total=x.total,
-            start=x.start,
-            limit=x.limit,
-            result=x.result,
-        )
+        if json.pop("responseStatus") != "success":
+            raise ValueError()
+
+        data: StrAnyDict = json.pop("responseData")
+        json["entity"], json["result"] = next(iter(data.items()))
+
+        return ApiResponse.from_dict(json)

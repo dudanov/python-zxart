@@ -3,12 +3,15 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Annotated, Any, Literal
+from typing import Annotated
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
-from mashumaro.mixins.orjson import DataClassORJSONMixin
+from mashumaro.mixins.dict import DataClassDictMixin
+from mashumaro.types import Discriminator
 from yarl import URL
+
+from .common import Entity
 
 _RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
 
@@ -17,8 +20,6 @@ type HtmlStr = Annotated[str, "HtmlStr"]
 
 type UrlStr = Annotated[str, "UrlStr"]
 """Строка с экранированными символами URL"""
-
-type StrAnyDict = dict[str, Any]
 
 
 def _unescape(value: str) -> str:
@@ -214,64 +215,9 @@ class Author(EntityBase):
     """Идентификаторы на других ресурсах"""
 
 
-@dc.dataclass(kw_only=True)
-class ResponseData:
-    """Модель данных ответа"""
-
-    author: list[Author] | None = None
-    """Авторы"""
-    authorAlias: list[AuthorAlias] | None = None
-    """Псевдонимы авторов"""
-    group: list[Author] | None = None
-    """Группы"""
-    groupAlias: list[Author] | None = None
-    """Псевдонимы групп"""
-    zxMusic: list[Tune] | None = None
-    """Музыкальные композиции"""
-    zxProd: list[Author] | None = None
-    """Продукты"""
-    zxRelease: list[Author] | None = None
-    """Релизы"""
-    zxPicture: list[Image] | None = None
-    """Изображения"""
-    zxProdCategory: list[ProductCategory] | None = None
-    """Категории"""
-
-
-@dc.dataclass(kw_only=True)
-class Response(DataClassORJSONMixin):
-    """Модель ответа на запросы"""
-
-    entity: str
-    """Сущность в ответе"""
-    status: Literal["success"]
-    """Статус"""
-    total: int
-    """Всего записей в базе данных"""
-    start: int
-    """Начальный индекс"""
-    limit: int
-    """Ограничение"""
-    result: list[Tune]
-    """Данные ответа"""
-
-    @classmethod
-    def __pre_deserialize__(cls, x: StrAnyDict) -> StrAnyDict:
-        data: StrAnyDict = x.pop("responseData")
-        x["entity"], x["result"] = next(iter(data.items()))
-        return x
-
-    class Config(BaseConfig):
-        lazy_compilation = True
-        aliases = {
-            "status": "responseStatus",
-            "total": "totalAmount",
-        }
-
-
 @dc.dataclass
-class ApiResponse[T]:
-    """Ответ API"""
+class ApiResponse[T](DataClassDictMixin):
+    """Модель ответа на запросы"""
 
     total: int
     """Всего записей в базе данных"""
@@ -280,4 +226,34 @@ class ApiResponse[T]:
     limit: int
     """Ограничение"""
     result: list[T]
-    """Список объектов запроса"""
+    """Данные ответа"""
+
+    class Config(BaseConfig):
+        aliases = {"total": "totalAmount"}
+        discriminator = Discriminator(field="entity", include_subtypes=True)
+        lazy_compilation = True
+
+
+@dc.dataclass
+class AuthorResponse(ApiResponse[Author]):
+    entity = Entity.AUTHOR
+
+
+@dc.dataclass
+class AuthorAliasResponse(ApiResponse[AuthorAlias]):
+    entity = Entity.AUTHOR_ALIAS
+
+
+@dc.dataclass
+class ProductCategoryResponse(ApiResponse[ProductCategory]):
+    entity = Entity.PRODUCT_CATEGORY
+
+
+@dc.dataclass
+class TuneResponse(ApiResponse[Tune]):
+    entity = Entity.TUNE
+
+
+@dc.dataclass
+class ImageResponse(ApiResponse[Image]):
+    entity = Entity.IMAGE
