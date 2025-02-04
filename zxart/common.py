@@ -82,12 +82,12 @@ class CommonOptions(TypedDict, total=False):
 
     language: Language
     """Язык переводимых полей ответа."""
+    limit: int
+    """Ограничение ответа."""
     order: OrderSettings | Order
     """Порядок сортировки."""
     start: int
     """Индекс начальной записи выборки."""
-    limit: int
-    """Ограничение ответа."""
     id: int
     """Фильтр: идентификатор сущности"""
 
@@ -95,10 +95,10 @@ class CommonOptions(TypedDict, total=False):
 class MediaParams(CommonOptions, total=False):
     """Опции фильтра"""
 
-    title: str
-    """Фильтр: содержание наименования"""
     author_id: int
     """Фильтр: идентификатор автора"""
+    title: str
+    """Фильтр: содержание наименования"""
     years: Iterable[int] | int
     """Фильтр: годы публикации"""
     min_rating: float

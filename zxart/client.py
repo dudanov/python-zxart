@@ -30,7 +30,7 @@ _BASE_URL = yarl.URL("https://zxart.ee/api/")
 
 
 class ZXArtApiError(Exception):
-    """"""
+    """Ошибка API"""
 
 
 class ZXArtClient:
@@ -72,6 +72,8 @@ class ZXArtClient:
         return self.close()
 
     async def close(self):
+        """Закрытие"""
+
         if self._close_connector:
             await self._cli.close()
 
@@ -101,7 +103,28 @@ class ZXArtClient:
         self,
         entity: Literal[Entity.TUNE],
         **kwargs: Unpack[TuneParams],
-    ) -> ApiResponse[Tune]: ...
+    ) -> ApiResponse[Tune]:
+        """
+        Запрос мелодий по параметрам:
+        - `start`: стартовая позиция курсора запроса.
+
+        Фильтры:
+        - `id`: идентификатор сущности.
+        - `author_id`: идентификатор автора.
+        - `title`: контекст названия.
+        - `years`: год(а) издания (поддерживает `Iterable`).
+        - `min_rating`: с минимальным рейтингом.
+        - `min_party_place`: с минимальным местом на мероприятии.
+        - `tags_include`: включает теги (поддерживает `Iterable`).
+        - `tags_exclude`: не включает теги (поддерживает `Iterable`).
+        - `format`: формат мелодии.
+        - `format_group`: формат группы мелодии.
+
+        Общие параметры (значения по-умолчанию из клиента):
+        - `language`: язык переводимых полей сущностей.
+        - `limit`: ограничение по количеству записей.
+        - `order`: порядок сортировки результата.
+        """
 
     @overload
     async def api(
