@@ -120,8 +120,8 @@ class ZXArtClient:
         - `years`: год(а) издания (поддерживает `Iterable`).
         - `min_rating`: минимальный рейтинг.
         - `min_party_place`: минимальное место на мероприятии.
-        - `tags_include`: включает теги (поддерживает `Iterable`).
-        - `tags_exclude`: не включает теги (поддерживает `Iterable`).
+        - `tags_include`: включает тег(и) (поддерживает `Iterable`).
+        - `tags_exclude`: не включает тег(и) (поддерживает `Iterable`).
         - `format`: формат мелодии.
         - `format_group`: формат группы мелодии.
         """
@@ -148,8 +148,8 @@ class ZXArtClient:
         - `years`: год(а) издания (поддерживает `Iterable`).
         - `min_rating`: минимальный рейтинг.
         - `min_party_place`: минимальное место на мероприятии.
-        - `tags_include`: включает теги (поддерживает `Iterable`).
-        - `tags_exclude`: не включает теги (поддерживает `Iterable`).
+        - `tags_include`: включает тег(и) (поддерживает `Iterable`).
+        - `tags_exclude`: не включает тег(и) (поддерживает `Iterable`).
         """
 
     async def api(self, entity: Entity, **kwargs: Any) -> ApiResponse:
