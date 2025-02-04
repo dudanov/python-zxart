@@ -1,9 +1,28 @@
 [tool.poetry]
+authors = ["Sergey Dudanov <sergey.dudanov@gmail.com>"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "Natural Language :: Russian",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+]
+description = "Asynchronous Python client for the ZXArt.ee API."
+documentation = "https://github.com/dudanov/python-zxart"
+homepage = "https://github.com/dudanov/python-zxart"
+keywords = ["zxart", "zxspectrum", "api", "async", "client"]
+license = "Apache-2.0"
+maintainers = ["Sergey Dudanov <sergey.dudanov@gmail.com>"]
 name = "zxart"
 version = "0.3.1"
-description = "Unofficial zxart.ee API client."
-authors = ["Sergey V. DUDANOV <sergey.dudanov@gmail.com>"]
+packages = [
+  {include = "zxart", from = "src"},
+]
 readme = "README.md"
+repository = "https://github.com/dudanov/python-zxart"
 
 [tool.poetry.dependencies]
 python = ">=3.12,<3.14"
