@@ -7,13 +7,13 @@ import aiohttp
 import orjson
 import yarl
 
-from .common import Language, Order, process_filters
+from .common import Entity, Language, Order, process_filters
 from .models import ApiResponse
 
 if TYPE_CHECKING:
     from typing import Any, Literal, Unpack
 
-    from .common import CommonOptions, Entity, OrderSettings
+    from .common import CommonOptions, OrderSettings
     from .image import ImageParams
     from .models import Author, AuthorAlias, Image, ProductCategory, Tune
     from .tune import TuneParams
@@ -175,3 +175,9 @@ class ZXArtClient:
         json["entity"] = entity
 
         return ApiResponse.from_dict(json)
+
+    async def author(self, author_id: int) -> Author | None:
+        """Запрос автора по идентификатору."""
+
+        if x := (await self.api(Entity.AUTHOR, id=author_id)).result:
+            return x[0]
