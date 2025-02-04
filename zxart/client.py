@@ -21,7 +21,7 @@ if TYPE_CHECKING:
 _LOGGER = logging.getLogger(__name__)
 
 # Опции по-умолчанию
-_DEFAULT_SORTING = Order.MOST_RECENT
+_DEFAULT_ORDER = Order.MOST_RECENT
 _DEFAULT_LANGUAGE = Language.RUSSIAN
 _DEFAULT_LIMIT = 60
 
@@ -30,10 +30,12 @@ _BASE_URL = yarl.URL("https://zxart.ee/api/")
 
 
 class ZXArtApiError(Exception):
-    pass
+    """"""
 
 
 class ZXArtClient:
+    """Клиент ZXArt"""
+
     _cli: aiohttp.ClientSession
     _language: Language
     _limit: int
@@ -47,9 +49,19 @@ class ZXArtClient:
         order: Order | OrderSettings | None = None,
         session: aiohttp.ClientSession | None = None,
     ) -> None:
+        """
+        Инициализирует клиент параметрами запроса `по-умолчанию`.
+
+        Параметры:
+        - `language`: язык переводимых полей сущностей
+        - `limit`: ограничение по количеству записей
+        - `order`: порядок сортировки результата
+        - `session`: пользовательская сессия `aiohttp.ClientSession`
+        """
+
         self._language = language or _DEFAULT_LANGUAGE
         self._limit = limit or _DEFAULT_LIMIT
-        self._order = order or _DEFAULT_SORTING
+        self._order = order or _DEFAULT_ORDER
         self._cli = session or aiohttp.ClientSession()
         self._close_connector = not session
 
