@@ -1,9 +1,9 @@
 # Python: Asynchronous ZXArt.ee API Client
 
-[![GitHub Release][releases-shield]][releases]
-[![Python Versions][python-versions-shield]][pypi]
-![Project Stage][project-stage-shield]
-![Project Maintenance][maintenance-shield]
-[![License][license-shield]](LICENSE)
+![PyPI - Version](https://img.shields.io/pypi/v/zxart)
+![PyPI - Status](https://img.shields.io/pypi/status/zxart)
+![PyPI - License](https://img.shields.io/pypi/l/zxart)
+![PyPI - Downloads](https://img.shields.io/pypi/dm/zxart)
+![PyPI - Python Version](https://img.shields.io/pypi/pyversions/zxart)
 
 Simple Python client for [zxart](https://zxart.ee/) site.
