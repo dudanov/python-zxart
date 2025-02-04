@@ -6,4 +6,4 @@
 ![PyPI - License](https://img.shields.io/pypi/l/zxart)
 ![PyPI - Downloads](https://img.shields.io/pypi/dm/zxart)
 
-Simple Python client for [zxart](https://zxart.ee/) site.
+Simple asynchronous Python [ZXArt.ee](https://zxart.ee/) API client.
