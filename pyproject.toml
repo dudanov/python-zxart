@@ -7,22 +7,13 @@ authors = [{name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com"}]
 maintainers = [{name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com"}]
 readme = "README.md"
 description = "Asynchronous Python client for the ZXArt.ee API."
-classifiers = [
-  "Development Status :: 4 - Beta",
-  "Framework :: AsyncIO",
-  "Intended Audience :: Developers",
-  "Natural Language :: Russian",
-  "Programming Language :: Python :: 3.12",
-  "Programming Language :: Python :: 3.13",
-  "Programming Language :: Python :: 3",
-  "Topic :: Software Development :: Libraries :: Python Modules",
-]
 requires-python = ">=3.12"
 dependencies = [
     "aiohttp>=3.10.0",
     "mashumaro>=3.15",
     "orjson>=3.10.0",
 ]
+dynamic = ["classifiers", "dependencies"]
 
 [project.urls]
 homepage = "https://github.com/dudanov/python-zxart"
@@ -33,6 +24,13 @@ documentation = "https://github.com/dudanov/python-zxart"
 requires-poetry = ">=2.0"
 packages = [
   {include = "zxart", from = "src"},
+]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Framework :: AsyncIO",
+  "Intended Audience :: Developers",
+  "Natural Language :: Russian",
+  "Topic :: Software Development :: Libraries :: Python Modules",
 ]
 
 [build-system]
