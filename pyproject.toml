@@ -1,15 +1,15 @@
 [tool.poetry]
 name = "zxart"
-version = "0.3.0"
+version = "0.3.1"
 description = "Unofficial zxart.ee API client."
 authors = ["Sergey V. DUDANOV <sergey.dudanov@gmail.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.12"
-aiohttp = "^3.11.11"
-mashumaro = "^3.15"
-orjson = "^3.10.15"
+python = ">=3.12,<3.14"
+aiohttp = ">=3.10.0"
+mashumaro = ">=3.15"
+orjson = ">=3.10.0"
 
 
 [build-system]

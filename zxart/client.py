@@ -169,7 +169,7 @@ class ZXArtClient:
             json: dict[str, Any] = await x.json(loads=orjson.loads)
 
         if json.pop("responseStatus") != "success":
-            raise ZXArtApiError("API request error!")
+            raise ZXArtApiError("API request error.")
 
         json["result"] = json.pop("responseData")[entity]
         json["entity"] = entity
