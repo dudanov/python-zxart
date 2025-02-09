@@ -9,7 +9,6 @@ from urllib.parse import unquote
 from mashumaro.config import BaseConfig
 from mashumaro.mixins.dict import DataClassDictMixin
 from mashumaro.types import Discriminator
-from yarl import URL
 
 from .common import Entity
 
@@ -57,7 +56,7 @@ class EntityBase:
     """Идентификатор"""
     title: HtmlStr | None = None
     """Название"""
-    url: URL
+    url: UrlStr
     """URL страницы с описанием"""
     created: dt.datetime
     """Дата и время создания записи"""
@@ -91,7 +90,6 @@ class EntityBase:
             dt.datetime: {"deserialize": dt.datetime.fromtimestamp},
             dt.timedelta: {"deserialize": _duration},
             HtmlStr: {"deserialize": _unescape},
-            URL: {"deserialize": URL},
             UrlStr: {"deserialize": unquote},
         }
 
@@ -118,7 +116,7 @@ class MediaBase(EntityBase):
     """Год написания"""
     description: HtmlStr | None = None
     """Описание"""
-    original_url: URL | None = None
+    original_url: UrlStr | None = None
     """URL оригинального файла"""
 
 
@@ -134,7 +132,7 @@ class Tune(MediaBase):
     """Кол-во прослушиваний"""
     filename: UrlStr | None = None
     """Имя оригинального файла"""
-    mp3_url: URL | None = None
+    mp3_url: UrlStr | None = None
     """URL файла MP3"""
 
 
@@ -142,7 +140,7 @@ class Tune(MediaBase):
 class Image(MediaBase):
     """Изображение"""
 
-    image_url: URL | None = None
+    image_url: UrlStr | None = None
     """URL изображения"""
     views: int | None = None
     """Кол-во просмотров"""
