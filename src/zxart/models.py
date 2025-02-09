@@ -3,7 +3,7 @@ import datetime as dt
 import html
 import re
 from decimal import Decimal
-from typing import Annotated
+from typing import Annotated, Any
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
@@ -71,10 +71,8 @@ class EntityBase:
             "duration": "time",
             "end_date": "endDate",
             "filename": "originalFileName",
-            "image_url": "imageUrl",
             "import_ids": "importIds",
             "modified": "dateModified",
-            "mp3_url": "mp3FilePath",
             "name": "realName",
             "num_images": "picturesQuantity",
             "num_tunes": "tunesQuantity",
@@ -118,6 +116,14 @@ class MediaBase(EntityBase):
     """Описание"""
     original_url: UrlStr | None = None
     """URL оригинального файла"""
+    media_url: UrlStr | None = None
+    """URL стандартного медиа файла"""
+
+    @classmethod
+    def __pre_deserialize__(cls, x: dict[Any, Any]) -> dict[Any, Any]:
+        if url := (x.pop("mp3FilePath", None) or x.pop("imageUrl", None)):
+            x["media_url"] = url
+        return x
 
 
 @dc.dataclass(kw_only=True)
@@ -132,16 +138,12 @@ class Tune(MediaBase):
     """Кол-во прослушиваний"""
     filename: UrlStr | None = None
     """Имя оригинального файла"""
-    mp3_url: UrlStr | None = None
-    """URL файла MP3"""
 
 
 @dc.dataclass(kw_only=True)
 class Image(MediaBase):
     """Изображение"""
 
-    image_url: UrlStr | None = None
-    """URL изображения"""
     views: int | None = None
     """Кол-во просмотров"""
 
