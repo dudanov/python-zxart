@@ -1,33 +1,27 @@
 [project]
 name = "zxart"
-version = "0.3.4"
-keywords = ["zxart", "zxspectrum", "api", "async", "client"]
-license = "Apache-2.0"
+version = "0.3.5"
+description = "Asynchronous Python client for the ZXArt.ee API."
 authors = [
   { name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com" },
 ]
 maintainers = [
   { name = "Sergey Dudanov", email = "sergey.dudanov@gmail.com" },
 ]
+license = "Apache-2.0"
 readme = "README.md"
-description = "Asynchronous Python client for the ZXArt.ee API."
-requires-python = ">=3.12"
+requires-python = ">=3.12,<3.14"
 dependencies = [
-    "aiohttp>=3.10.0",
-    "mashumaro>=3.15",
-    "orjson>=3.10.0",
+    "aiohttp >= 3.10",
+    "mashumaro >= 3.15",
+    "orjson >= 3.10",
 ]
-dynamic = ["classifiers", "dependencies"]
-
-[project.urls]
-homepage = "https://github.com/dudanov/python-zxart"
-repository = "https://github.com/dudanov/python-zxart"
-documentation = "https://github.com/dudanov/python-zxart"
-
-[tool.poetry]
-requires-poetry = ">=2.0"
-packages = [
-  { include = "zxart", from = "src" },
+keywords = [
+  "zxart",
+  "zxspectrum",
+  "api",
+  "async",
+  "client",
 ]
 classifiers = [
   "Development Status :: 4 - Beta",
@@ -36,8 +30,36 @@ classifiers = [
   "Natural Language :: Russian",
   "Operating System :: OS Independent",
   "Topic :: Software Development :: Libraries :: Python Modules",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3 :: Only",
+  "Programming Language :: Python :: 3.12",
+  "Programming Language :: Python :: 3.13",
+]
+
+[project.urls]
+"Documentation" = "https://github.com/dudanov/python-zxart"
+"Home Page" = "https://github.com/dudanov/python-zxart"
+"Issue Tracker" = "https://github.com/dudanov/python-zxart/issues"
+"Source Code" = "https://github.com/dudanov/python-zxart.git"
+
+[tool.uv]
+dev-dependencies = [
+  "isort",
+  "ruff",
 ]
 
 [build-system]
-requires = ["poetry-core"]
-build-backend = "poetry.core.masonry.api"
+requires = ["hatchling"]
+build-backend = "hatchling.build"
+
+[tool.ruff]
+line-length = 80
+
+[tool.ruff.format]
+docstring-code-format = true
+indent-style = "space"
+quote-style = "double"
+
+[tool.isort]
+line_length = 80
+profile = "black"
