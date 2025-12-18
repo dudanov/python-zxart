@@ -1,7 +1,6 @@
 import dataclasses as dc
 import datetime as dt
 import html
-import re
 from decimal import Decimal
 from typing import Annotated, Any
 from urllib.parse import unquote
@@ -12,8 +11,6 @@ from mashumaro.types import Discriminator
 
 from .common import Entity
 
-_RE_DESCRIPTION = re.compile(r"<pre>(.*)</pre>", re.DOTALL)
-
 type HtmlStr = Annotated[str, "HtmlStr"]
 """Строка с экранированными символами HTML"""
 
@@ -21,21 +18,25 @@ type UrlStr = Annotated[str, "UrlStr"]
 """Строка с экранированными символами URL"""
 
 
-def _unescape(value: str) -> str:
-    value = html.unescape(value)
-    if m := _RE_DESCRIPTION.fullmatch(value):
-        return m.group(1)
-    return value
+def _unescape(x: str) -> str:
+    """Декодирует строку HTML"""
+
+    x = html.unescape(x)
+
+    return x[5:-6] if x.startswith("<pre>") else x
 
 
 def _duration(value: str) -> dt.timedelta:
     m = map(float, reversed(value.split(":")))
     s = sum(x * k for x, k in zip(m, [1, 60, 3600]))
+
     return dt.timedelta(seconds=s)
 
 
-def _date(value: str) -> dt.date:
-    return dt.datetime.strptime(value, "%d.%m.%Y").date()
+def _date(x: str) -> dt.date:
+    """Возвращает дату из строки вида dd.mm.YYYY"""
+
+    return dt.date(*map(int, reversed(x.split("."))))
 
 
 @dc.dataclass
