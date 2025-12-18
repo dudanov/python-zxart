@@ -26,6 +26,7 @@ def _unescape(x: str) -> str:
 
     x = html.unescape(x)
 
+    # Извлечем если текст внутри тега `pre`.
     return x[5:-6] if x.startswith("<pre>") else x
 
 
