@@ -125,13 +125,14 @@ class MediaBase(EntityBase):
 
     @classmethod
     def __pre_deserialize__(cls, data: dict[str, Any]) -> dict[str, Any]:
+        """Перед десериализацией приводит медиа URL к общему ключу"""
+
         for key in URL_KEYS:
             if url := data.pop(key, None):
                 data["media_url"] = url
+                break
 
-                return data
-
-        raise ValueError("Media URL not found.")
+        return data
 
 
 @dc.dataclass(kw_only=True)
