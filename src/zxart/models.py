@@ -11,7 +11,7 @@ from mashumaro.types import Discriminator
 
 from .common import Entity
 
-URL_KEYS: Final = ["mp3FilePath", "imageUrl"]
+URL_KEYS: Final = "mp3FilePath", "imageUrl"
 
 
 type HtmlStr = Annotated[str, "HtmlStr"]
