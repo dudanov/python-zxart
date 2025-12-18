@@ -2,7 +2,7 @@ import dataclasses as dc
 import datetime as dt
 import html
 from decimal import Decimal
-from typing import Annotated, Any
+from typing import Annotated, Any, Final
 from urllib.parse import unquote
 
 from mashumaro.config import BaseConfig
@@ -10,6 +10,9 @@ from mashumaro.mixins.dict import DataClassDictMixin
 from mashumaro.types import Discriminator
 
 from .common import Entity
+
+URL_KEYS: Final = ["mp3FilePath", "imageUrl"]
+
 
 type HtmlStr = Annotated[str, "HtmlStr"]
 """Строка с экранированными символами HTML"""
@@ -121,10 +124,14 @@ class MediaBase(EntityBase):
     """URL стандартного медиа файла"""
 
     @classmethod
-    def __pre_deserialize__(cls, x: dict[Any, Any]) -> dict[Any, Any]:
-        if url := (x.pop("mp3FilePath", None) or x.pop("imageUrl", None)):
-            x["media_url"] = url
-        return x
+    def __pre_deserialize__(cls, data: dict[str, Any]) -> dict[str, Any]:
+        for key in URL_KEYS:
+            if url := data.pop(key, None):
+                data["media_url"] = url
+
+                return data
+
+        raise ValueError("Media URL not found.")
 
 
 @dc.dataclass(kw_only=True)
